@@ -83,7 +83,7 @@ function isBlocked(podcast: Podcast): boolean {
   );
 }
 
-const updatedAt = computed(() => podcasts.value[0]?.updated_at ?? '');
+const lastFetchTime = ref('');
 
 function growthRate(p: Podcast): number {
   return p.latest_count > 0 ? p.daily_change / p.latest_count : 0;
@@ -135,6 +135,7 @@ async function loadRanking(): Promise<void> {
     }
 
     podcasts.value = result.data.slice(0, 10);
+    lastFetchTime.value = new Date().toLocaleString('zh-CN', { hour12: false });
   } catch (caught) {
     error.value = getRequestErrorMessage(caught);
   } finally {
@@ -236,7 +237,7 @@ onUnmounted(() => {
         </button>
       </div>
       <div class="meta-row">
-        <span v-if="updatedAt">数据更新时间：{{ updatedAt }}</span>
+        <span v-if="lastFetchTime">数据更新时间：{{ lastFetchTime }}</span>
       </div>
     </section>
 
